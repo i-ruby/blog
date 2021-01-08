@@ -1,0 +1,9 @@
+spring:
+  devtools:
+    restart:
+      enabled: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://121.4.73.4:3306/blog
+    username: root
+    password: iruby234
