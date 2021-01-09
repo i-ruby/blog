@@ -1,5 +1,7 @@
 package work.iruby.blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.Instant;
 
 /**
@@ -9,6 +11,7 @@ import java.time.Instant;
 public class BlogUser {
     private Integer id;
     private String username;
+    @JsonIgnore
     private String password;
     private String avatar;
     private Instant updatedAt;

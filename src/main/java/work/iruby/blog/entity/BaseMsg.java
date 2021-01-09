@@ -6,10 +6,20 @@ package work.iruby.blog.entity;
  */
 public class BaseMsg<T> {
     private String status;
+    private String msg;
     private T data;
 
-    public BaseMsg(String status, T data) {
+    public static <T> BaseMsg<T> failure(String msg) {
+        return new BaseMsg<T>("fail", msg, null);
+    }
+
+    public static <T> BaseMsg<T> success(String msg, T t) {
+        return new BaseMsg<T>("ok", msg, t);
+    }
+
+    public BaseMsg(String status, String msg, T data) {
         this.status = status;
+        this.msg = msg;
         this.data = data;
     }
 
@@ -19,6 +29,14 @@ public class BaseMsg<T> {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     public T getData() {

@@ -1,17 +1,24 @@
 package work.iruby.blog.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import work.iruby.blog.entity.BaseMsg;
 import work.iruby.blog.entity.BlogUser;
-import work.iruby.blog.mapper.BlogUserMapper;
+import work.iruby.blog.entity.LoginMsg;
+import work.iruby.blog.service.BlogUserServiceImpl;
 
-import java.util.List;
+import javax.inject.Inject;
 
 /**
  * @author Ruby
@@ -19,18 +26,71 @@ import java.util.List;
  */
 @Controller
 public class AuthController {
-    @Autowired
-    private BlogUserMapper blogUserMapper;
+    private final String ANONYMOUS_USER = "anonymousUser";
+    private final BlogUserServiceImpl blogUserService;
+    private final AuthenticationManager authenticationManager;
 
-//    @PostMapping("/auth/register")
-//    public String register() {
-//        return "";
-//    }
-
-    @GetMapping("/")
-    @ResponseBody
-    public List<BlogUser> listBlogUser() {
-        List<BlogUser> blogUsers = blogUserMapper.selectList(null);
-        return blogUsers;
+    @Inject
+    public AuthController(BlogUserServiceImpl blogUserService, AuthenticationManager authenticationManager) {
+        this.blogUserService = blogUserService;
+        this.authenticationManager = authenticationManager;
     }
+
+    @GetMapping("/auth")
+    @ResponseBody
+    public Object auth() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (ANONYMOUS_USER.equals(username)) {
+            return LoginMsg.success(null, null, false);
+        }
+        return LoginMsg.success(null, blogUserService.getBlogUserDetail(username), false);
+    }
+
+    @PostMapping("/auth/register")
+    @ResponseBody
+    public Object register(@RequestBody ModelMap model) {
+        String username = (String) model.get("username");
+        String password = (String) model.get("password");
+        try {
+            if (blogUserService.register(username, password)) {
+                return BaseMsg.success("注册成功", blogUserService.getBlogUserDetail(username));
+            }
+        } catch (DuplicateKeyException e) {
+            return BaseMsg.failure("用户名已存在");
+        }
+        return BaseMsg.failure("注册失败");
+    }
+
+    @PostMapping("/auth/login")
+    @ResponseBody
+    public Object login(@RequestBody ModelMap model) {
+        String username = (String) model.get("username");
+        String password = (String) model.get("password");
+        System.out.println(username + ":" + password);
+        BaseMsg<BlogUser> msg;
+        try {
+            UserDetails userDetails = blogUserService.loadUserByUsername(username);
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+            authenticationManager.authenticate(token);
+            SecurityContextHolder.getContext().setAuthentication(token);
+            msg = BaseMsg.success("登录成功", blogUserService.getBlogUserDetail(username));
+        } catch (UsernameNotFoundException e) {
+            return BaseMsg.failure("用户不存在");
+        } catch (BadCredentialsException e) {
+            return BaseMsg.failure("密码不正确");
+        }
+        return msg;
+    }
+
+    @GetMapping("/auth/logout")
+    @ResponseBody
+    public Object logout() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (ANONYMOUS_USER.equals(username)) {
+            return BaseMsg.failure("用户尚未登录");
+        }
+        SecurityContextHolder.clearContext();
+        return BaseMsg.success("注销成功", null);
+    }
+
 }
