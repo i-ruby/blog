@@ -43,7 +43,7 @@ public class AuthController {
         if (ANONYMOUS_USER.equals(username)) {
             return LoginMsg.success(null, null, false);
         }
-        return LoginMsg.success(null, blogUserService.getBlogUserDetail(username), false);
+        return LoginMsg.success(null, blogUserService.getBlogUserDetail(username), true);
     }
 
     @PostMapping("/auth/register")
@@ -75,7 +75,6 @@ public class AuthController {
     public Object login(@RequestBody ModelMap model) {
         String username = (String) model.get("username");
         String password = (String) model.get("password");
-        System.out.println(username + ":" + password);
         BaseMsg<BlogUser> msg;
         try {
             UserDetails userDetails = blogUserService.loadUserByUsername(username);

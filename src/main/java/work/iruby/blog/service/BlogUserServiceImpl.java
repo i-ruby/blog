@@ -31,6 +31,9 @@ public class BlogUserServiceImpl extends ServiceImpl<BlogUserMapper, BlogUser> i
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         BlogUser blogUser = getBlogUserDetail(username);
+        if (blogUser == null){
+            throw new UsernameNotFoundException("用户不存在");
+        }
         return new User(username, blogUser.getPassword(), Collections.emptyList());
     }
 
