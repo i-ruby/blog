@@ -10,11 +10,11 @@ public class BaseMsg<T> {
     private T data;
 
     public static <T> BaseMsg<T> failure(String msg) {
-        return new BaseMsg<T>("fail", msg, null);
+        return new BaseMsg<>("fail", msg, null);
     }
 
     public static <T> BaseMsg<T> success(String msg, T t) {
-        return new BaseMsg<T>("ok", msg, t);
+        return new BaseMsg<>("ok", msg, t);
     }
 
     public BaseMsg(String status, String msg, T data) {

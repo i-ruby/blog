@@ -13,7 +13,7 @@ public class LoginMsg<T> extends BaseMsg<T> {
     }
 
     public static <T> LoginMsg<T> success(String msg, T t, Boolean isLogin) {
-        return new LoginMsg<T>("ok", msg, t, isLogin);
+        return new LoginMsg<>("ok", msg, t, isLogin);
     }
 
     public Boolean getLogin() {
