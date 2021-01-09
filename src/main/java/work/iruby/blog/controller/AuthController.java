@@ -51,6 +51,15 @@ public class AuthController {
     public Object register(@RequestBody ModelMap model) {
         String username = (String) model.get("username");
         String password = (String) model.get("password");
+        if (username == null || username.isEmpty()) {
+            return BaseMsg.failure("用户名不得为空");
+        }
+        if (username.length() > 15) {
+            return BaseMsg.failure("用户名过长");
+        }
+        if (password.length() > 16 || password.length() < 6) {
+            return BaseMsg.failure("密码长度只能为6到16个字符");
+        }
         try {
             if (blogUserService.register(username, password)) {
                 return BaseMsg.success("注册成功", blogUserService.getBlogUserDetail(username));
