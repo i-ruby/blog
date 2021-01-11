@@ -65,6 +65,18 @@ public class BlogUser {
         this.createdAt = createdAt;
     }
 
+    public BlogUser() {
+    }
+
+    public BlogUser(Integer id, String username, String password, String avatar, Instant updatedAt, Instant createdAt) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.avatar = avatar;
+        this.updatedAt = updatedAt;
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("BlogUser{");

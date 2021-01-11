@@ -7,6 +7,9 @@ package work.iruby.blog.entity;
 public class LoginMsg<T> extends BaseMsg<T> {
     private Boolean isLogin;
 
+    public LoginMsg() {
+    }
+
     public LoginMsg(String status, String msg, T data, Boolean isLogin) {
         super(status, msg, data);
         this.isLogin = isLogin;

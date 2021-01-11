@@ -17,6 +17,9 @@ public class BaseMsg<T> {
         return new BaseMsg<>("ok", msg, t);
     }
 
+    public BaseMsg() {
+    }
+
     public BaseMsg(String status, String msg, T data) {
         this.status = status;
         this.msg = msg;
