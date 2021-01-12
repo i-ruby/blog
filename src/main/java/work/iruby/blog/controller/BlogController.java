@@ -1,13 +1,8 @@
 package work.iruby.blog.controller;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import work.iruby.blog.entity.BaseMsg;
@@ -16,7 +11,6 @@ import work.iruby.blog.entity.LoginMsg;
 import work.iruby.blog.service.BlogServiceImpl;
 
 import javax.inject.Inject;
-import java.util.Map;
 
 /**
  * @author Ruby
@@ -53,9 +47,9 @@ public class BlogController {
                             @RequestParam(value = "content") String content,
                             @RequestParam(value = "description", required = false) String description) {
         LoginMsg<BlogUser> blogUser = authController.getBlogUser();
-        if (blogUser.getLogin()){
+        if (blogUser.getLogin()) {
             return blogService.creatBlog(title, content, description);
-        }else {
+        } else {
             return BaseMsg.failure("登录后才能操作");
         }
     }
