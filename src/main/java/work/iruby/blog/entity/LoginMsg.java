@@ -26,4 +26,12 @@ public class LoginMsg<T> extends BaseMsg<T> {
     public void setLogin(Boolean login) {
         isLogin = login;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("LoginMsg{");
+        sb.append("isLogin=").append(isLogin);
+        sb.append('}');
+        return sb.toString();
+    }
 }

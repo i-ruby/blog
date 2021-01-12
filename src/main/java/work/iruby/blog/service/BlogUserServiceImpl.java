@@ -1,6 +1,6 @@
 package work.iruby.blog.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,14 +31,14 @@ public class BlogUserServiceImpl extends ServiceImpl<BlogUserMapper, BlogUser> i
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         BlogUser blogUser = getBlogUserDetail(username);
-        if (blogUser == null){
+        if (blogUser == null) {
             throw new UsernameNotFoundException("用户不存在");
         }
         return new User(username, blogUser.getPassword(), Collections.emptyList());
     }
 
     public BlogUser getBlogUserDetail(String username) {
-        return getOne(new QueryWrapper<BlogUser>().eq("username", username));
+        return getOne(Wrappers.query(new BlogUser()).eq("username", username));
     }
 
     public boolean register(String username, String password) {

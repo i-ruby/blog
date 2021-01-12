@@ -9,6 +9,7 @@ import work.iruby.blog.entity.BaseMsg;
 import work.iruby.blog.entity.BlogUser;
 import work.iruby.blog.entity.LoginMsg;
 import work.iruby.blog.service.BlogServiceImpl;
+import work.iruby.blog.vo.BlogVo;
 
 import javax.inject.Inject;
 
@@ -38,7 +39,7 @@ public class BlogController {
     }
 
     @GetMapping("/blog/{id}")
-    public Object getBlog(@PathVariable("id") Integer id) {
+    public BlogVo getBlog(@PathVariable("id") Integer id) {
         return blogService.getBlogById(id);
     }
 
@@ -48,7 +49,7 @@ public class BlogController {
                             @RequestParam(value = "description", required = false) String description) {
         LoginMsg<BlogUser> blogUser = authController.getBlogUser();
         if (blogUser.getLogin()) {
-            return blogService.creatBlog(title, content, description);
+            return blogService.creatBlog(blogUser.getData().getId(), title, content, description);
         } else {
             return BaseMsg.failure("登录后才能操作");
         }

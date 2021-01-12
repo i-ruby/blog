@@ -49,4 +49,14 @@ public class BaseMsg<T> {
     public void setData(T data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("BaseMsg{");
+        sb.append("status='").append(status).append('\'');
+        sb.append(", msg='").append(msg).append('\'');
+        sb.append(", data=").append(data);
+        sb.append('}');
+        return sb.toString();
+    }
 }

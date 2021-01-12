@@ -18,4 +18,18 @@ public class PageMsg<T> extends BaseMsg<T> {
         this.page = page;
         this.totalPage = totalPage;
     }
+
+    public static <T> PageMsg<T> success(String msg, T data, Integer total, Integer page, Integer totalPage) {
+        return new PageMsg<>("ok", msg, data, total, page, totalPage);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("PageMsg{");
+        sb.append("total=").append(total);
+        sb.append(", page=").append(page);
+        sb.append(", totalPage=").append(totalPage);
+        sb.append('}');
+        return sb.toString();
+    }
 }

@@ -15,7 +15,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public class Blog {
     private Integer id;
-    private String blogUserId;
+    private Integer blogUserId;
     private String title;
     private Boolean atIndex;
     private String description;

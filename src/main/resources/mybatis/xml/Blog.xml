@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="work.iruby.blog.mapper.BlogMapper">
+    <resultMap id="BlogVo" type="work.iruby.blog.vo.BlogVo">
+        <id property="id" column="blog_id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="content" column="content"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="title" column="title"/>
+        <association property="user" javaType="work.iruby.blog.vo.BlogUserVo">
+            <id property="id" column="blog_user_id"/>
+            <result property="username" column="username"/>
+            <result property="avatar" column="avatar"/>
+        </association>
+    </resultMap>
+    <select id="getBlogPage" resultMap="BlogVo">
+        select b.id as blog_id,
+               b.title as title,
+               b.description as description,
+               b.content as content,
+               b.updated_at as updated_at,
+               b.created_at as created_at,
+               bu.id as blog_user_id,
+               bu.username as username,
+               bu.avatar as avatar
+        from blog as b
+                 left join blog_user bu on b.blog_user_id = bu.id
+        <where>
+            <if test="atIndex != null">
+                b.at_index = #{atIndex}
+            </if>
+            <if test="blogUserId != null">
+                and b.blog_user_id = #{blogUserId}
+            </if>
+        </where>
+        limit #{limit} offset #{offset}
+    </select>
+</mapper>
