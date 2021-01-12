@@ -40,15 +40,7 @@ public class AuthController {
     @GetMapping("/auth")
     @ResponseBody
     public Object auth() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            return LoginMsg.success(null, null, false);
-        }
-        String username = authentication.getName();
-        if (ANONYMOUS_USER.equals(username)) {
-            return LoginMsg.success(null, null, false);
-        }
-        return LoginMsg.success(null, blogUserService.getBlogUserDetail(username), true);
+        return getBlogUser();
     }
 
     @PostMapping("/auth/register")
@@ -98,12 +90,24 @@ public class AuthController {
     @GetMapping("/auth/logout")
     @ResponseBody
     public Object logout() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (ANONYMOUS_USER.equals(username)) {
+        if (getBlogUser().getLogin()) {
+            SecurityContextHolder.clearContext();
+            return BaseMsg.success("注销成功", null);
+        } else {
             return BaseMsg.failure("用户尚未登录");
         }
-        SecurityContextHolder.clearContext();
-        return BaseMsg.success("注销成功", null);
+    }
+
+    public LoginMsg<BlogUser> getBlogUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return LoginMsg.success("", null, false);
+        }
+        String username = authentication.getName();
+        if (ANONYMOUS_USER.equals(username)) {
+            return LoginMsg.success(null, null, false);
+        }
+        return LoginMsg.success(null, blogUserService.getBlogUserDetail(username), true);
     }
 
 }
