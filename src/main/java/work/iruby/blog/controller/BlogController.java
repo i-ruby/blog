@@ -73,6 +73,7 @@ public class BlogController {
             return blogService.updateBlog(blogUser.getData().getId(), id, title, content, description, atIndex);
         }
     }
+
     @DeleteMapping("/blog/{id}")
     public BaseMsg<BlogVo> deleteBlog(
             @PathVariable("id") Integer id) {
@@ -83,5 +84,4 @@ public class BlogController {
             return blogService.deleteBlog(blogUser.getData().getId(), id);
         }
     }
-
 }
