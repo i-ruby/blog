@@ -23,6 +23,10 @@ public class PageMsg<T> extends BaseMsg<T> {
         return new PageMsg<>("ok", msg, data, total, page, totalPage);
     }
 
+    public static <T> PageMsg<T> failure(String msg) {
+        return new PageMsg<>("fail", msg, null, null, null, null);
+    }
+
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("PageMsg{");

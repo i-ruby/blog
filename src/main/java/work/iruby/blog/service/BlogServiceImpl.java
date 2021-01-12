@@ -1,10 +1,10 @@
 package work.iruby.blog.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import work.iruby.blog.entity.BaseMsg;
 import work.iruby.blog.entity.Blog;
 import work.iruby.blog.entity.BlogUser;
 import work.iruby.blog.entity.PageMsg;
@@ -14,7 +14,6 @@ import work.iruby.blog.vo.BlogVo;
 
 import javax.inject.Inject;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +22,7 @@ import java.util.List;
  */
 @Service
 public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> {
-    private BlogUserServiceImpl blogUserService;
+    private final BlogUserServiceImpl blogUserService;
 
     @Inject
     public BlogServiceImpl(BlogUserServiceImpl blogUserService) {
@@ -39,23 +38,33 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> {
         Blog blog = new Blog();
         blog.setAtIndex(atIndex);
         blog.setBlogUserId(userId);
-        int count = count(Wrappers.query(blog));
-        List<BlogVo> blogPage = getBaseMapper().getBlogPage(atIndex, userId, pageSize, page);
-        return PageMsg.success("获取成功", blogPage, count, page, (int) Math.ceil(count * 1.0 / pageSize));
+        PageMsg<List<BlogVo>> pageMsg;
+        try {
+            int count = count(Wrappers.query(blog));
+            List<BlogVo> blogPage = getBaseMapper().getBlogPage(atIndex, userId, pageSize, page);
+            pageMsg = PageMsg.success("获取成功", blogPage, count, page, (int) Math.ceil(count * 1.0 / pageSize));
+        } catch (Exception e) {
+            return PageMsg.failure("系统异常");
+        }
+
+        return pageMsg;
     }
 
-    public BlogVo getBlogById(Integer id) {
+    public BaseMsg<BlogVo> getBlogById(Integer id) {
         Blog blog = getById(id);
+        if (blog == null) {
+            return BaseMsg.failure("博客不存在");
+        }
         BlogVo blogVo = new BlogVo();
         BeanUtils.copyProperties(blog, blogVo);
         BlogUser blogUser = blogUserService.getById(blog.getBlogUserId());
         BlogUserVo blogUserVo = new BlogUserVo();
         BeanUtils.copyProperties(blogUser, blogUserVo);
         blogVo.setUser(blogUserVo);
-        return blogVo;
+        return BaseMsg.success("获取成功", blogVo);
     }
 
-    public BlogVo creatBlog(Integer blogUserId, String title, String content, String description) {
+    public BaseMsg<BlogVo> creatBlog(Integer blogUserId, String title, String content, String description) {
         Blog blog = new Blog();
         if (description == null || description.isEmpty()) {
             description = content.substring(0, 1);
@@ -68,10 +77,26 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> {
         blog.setCreatedAt(now);
         blog.setUpdatedAt(now);
         save(blog);
-        return getBlogById(blog.getId());
+        return BaseMsg.success("获取成功", getBlogById(blog.getId()).getData());
     }
 
-    public Object updateBlog(Integer id, String title, String content, String description, Boolean atIndex) {
-        return null;
+    public BaseMsg<BlogVo> updateBlog(Integer blogUserId, Integer id, String title, String content, String description, Boolean atIndex) {
+        Blog blog = getById(id);
+        if (blog == null) {
+            return BaseMsg.failure("博客不存在");
+        }
+        if (!blog.getBlogUserId().equals(blogUserId)) {
+            return BaseMsg.failure("无法修改别人的博客");
+        }
+
+        blog = new Blog();
+        blog.setId(id);
+        blog.setTitle(title);
+        blog.setContent(content);
+        blog.setDescription(description);
+        blog.setAtIndex(atIndex);
+        blog.setUpdatedAt(Instant.now());
+        updateById(blog);
+        return BaseMsg.success("修改成功", getBlogById(id).getData());
     }
 }

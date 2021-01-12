@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 import work.iruby.blog.entity.BaseMsg;
 import work.iruby.blog.entity.BlogUser;
 import work.iruby.blog.entity.LoginMsg;
+import work.iruby.blog.entity.PageMsg;
 import work.iruby.blog.service.BlogServiceImpl;
 import work.iruby.blog.vo.BlogVo;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * @author Ruby
@@ -29,9 +31,9 @@ public class BlogController {
     }
 
     @GetMapping("/blog")
-    public Object getBlogs(@RequestParam(value = "page", required = false) Integer page,
-                           @RequestParam(value = "userId", required = false) Integer userId,
-                           @RequestParam(value = "atIndex", required = false) Boolean atIndex) {
+    public PageMsg<List<BlogVo>> getBlogs(@RequestParam(value = "page", required = false) Integer page,
+                                          @RequestParam(value = "userId", required = false) Integer userId,
+                                          @RequestParam(value = "atIndex", required = false) Boolean atIndex) {
         if (page == null) {
             page = 1;
         }
@@ -39,14 +41,14 @@ public class BlogController {
     }
 
     @GetMapping("/blog/{id}")
-    public BlogVo getBlog(@PathVariable("id") Integer id) {
+    public BaseMsg<BlogVo> getBlog(@PathVariable("id") Integer id) {
         return blogService.getBlogById(id);
     }
 
     @PostMapping("/blog")
-    public Object creatBlog(@RequestParam(value = "title ") String title,
-                            @RequestParam(value = "content") String content,
-                            @RequestParam(value = "description", required = false) String description) {
+    public BaseMsg<BlogVo> creatBlog(@RequestParam(value = "title ") String title,
+                                     @RequestParam(value = "content") String content,
+                                     @RequestParam(value = "description", required = false) String description) {
         LoginMsg<BlogUser> blogUser = authController.getBlogUser();
         if (blogUser.getLogin()) {
             return blogService.creatBlog(blogUser.getData().getId(), title, content, description);
@@ -56,12 +58,18 @@ public class BlogController {
     }
 
     @PostMapping("/blog/{id}")
-    public Object updateBlog(
+    public BaseMsg<BlogVo> updateBlog(
             @PathVariable("id") Integer id,
             @RequestParam(value = "title ", required = false) String title,
             @RequestParam(value = "content", required = false) String content,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "atIndex", required = false) Boolean atIndex) {
-        return blogService.updateBlog(id, title, content, description, atIndex);
+        LoginMsg<BlogUser> blogUser = authController.getBlogUser();
+        if (!blogUser.getLogin()) {
+            return BaseMsg.failure("登录后才能操作");
+        } else {
+            return blogService.updateBlog(blogUser.getData().getId(), id, title, content, description, atIndex);
+        }
+
     }
 }
