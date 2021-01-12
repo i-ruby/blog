@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import work.iruby.blog.entity.BlogUser;
+import work.iruby.blog.entity.BlogUserDetail;
 import work.iruby.blog.mapper.BlogUserMapper;
 
 import javax.inject.Inject;
@@ -48,6 +49,10 @@ public class BlogUserServiceImpl extends ServiceImpl<BlogUserMapper, BlogUser> i
         blogUser.setCreatedAt(Instant.now());
         blogUser.setUpdatedAt(Instant.now());
         return save(blogUser);
+    }
+
+    public BlogUserDetail getBlogUserDetail() {
+        return getBaseMapper().getBlogUserDetail();
     }
 
 }

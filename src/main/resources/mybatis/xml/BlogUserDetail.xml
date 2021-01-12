@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="work.iruby.blog.mapper.BlogUserMapper">
+    <resultMap id="BlogUserDetail" type="work.iruby.blog.entity.BlogUserDetail">
+        <id property="id" column="blog_user_id"/>
+        <association property="user" columnPrefix="blog_user_" javaType="work.iruby.blog.entity.BlogUser">
+            <id property="id" column="id"/>
+            <result property="password" column="password"/>
+            <result property="username" column="username"/>
+            <result property="avatar" column="avatar"/>
+            <result property="updatedAt" column="updated_at"/>
+            <result property="createdAt" column="created_at"/>
+        </association>
+        <collection property="blogs" columnPrefix="blog_" ofType="work.iruby.blog.entity.Blog">
+            <id property="id" column="id"/>
+            <result property="blogUserId" column="blog_user_id"/>
+            <result property="title" column="title"/>
+            <result property="atIndex" column="at_index"/>
+            <result property="description" column="description"/>
+            <result property="content" column="content"/>
+            <result property="title" column="title"/>
+            <result property="updatedAt" column="updated_at"/>
+            <result property="createdAt" column="created_at"/>
+        </collection>
+    </resultMap>
+    <select id="getBlogUserDetail" resultMap="BlogUserDetail">
+        select bu.id as blog_user_id,
+               bu.username as blog_user_username,
+               bu.password as blog_user_password,
+               bu.avatar as blog_user_avatar,
+               bu.updated_at as blog_user_updated_at,
+               bu.created_at as blog_user_created_at,
+               b.id as blog_id,
+               b.blog_user_id as blog_blog_user_id,
+               b.title as blog_title,
+               b.at_index as blog_at_index,
+               b.description as blog_description,
+               b.content as blog_content,
+               b.created_at as blog_created_at,
+               b.updated_at as blog_updated_at
+        from blog_user as bu
+                 left join blog b on bu.id = b.blog_user_id
+        where bu.id = 1
+    </select>
+</mapper>

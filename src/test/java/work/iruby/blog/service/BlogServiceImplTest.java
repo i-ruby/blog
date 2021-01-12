@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import work.iruby.blog.entity.BlogUserDetail;
 import work.iruby.blog.entity.PageMsg;
 import work.iruby.blog.vo.BlogVo;
 
@@ -17,12 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class BlogServiceImplTest {
     @Autowired
     private BlogServiceImpl blogService;
+    @Autowired
+    private BlogUserServiceImpl blogUserService;
 
-    @Test
-    void creatBlog() throws JsonProcessingException {
-        BlogVo blogVo = blogService.creatBlog(1, "title", "content", null);
-        System.out.println(new ObjectMapper().writeValueAsString(blogVo));
-    }
     @Test
     void getBlogs(){
         PageMsg<List<BlogVo>> blogs = blogService.getBlogs(1, 1, null);
@@ -33,5 +31,11 @@ class BlogServiceImplTest {
         System.out.println(blogs);
         blogs = blogService.getBlogs(1, 1, true);
         System.out.println(blogs);
+    }
+
+    @Test
+    void getBlogUserDetail(){
+        BlogUserDetail blogUserDetail = blogUserService.getBlogUserDetail();
+        System.out.println(blogUserDetail);
     }
 }
