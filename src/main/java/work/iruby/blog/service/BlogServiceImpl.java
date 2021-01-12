@@ -99,4 +99,20 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> {
         updateById(blog);
         return BaseMsg.success("修改成功", getBlogById(id).getData());
     }
+
+    public BaseMsg<BlogVo> deleteBlog(Integer blogUserId, Integer blogId) {
+        Blog blog = getById(blogId);
+        if (blog == null) {
+            return BaseMsg.failure("博客不存在");
+        }
+        if (!blog.getBlogUserId().equals(blogUserId)) {
+            return BaseMsg.failure("无法删除别人的博客");
+        }
+        boolean remove = removeById(blogId);
+        if (remove){
+            return BaseMsg.success("删除成功",null);
+        }else {
+            return BaseMsg.failure("没有需要删除的博客");
+        }
+    }
 }

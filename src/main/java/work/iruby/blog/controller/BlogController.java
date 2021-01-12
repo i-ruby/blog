@@ -1,6 +1,8 @@
 package work.iruby.blog.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,7 +59,7 @@ public class BlogController {
         }
     }
 
-    @PostMapping("/blog/{id}")
+    @PatchMapping("/blog/{id}")
     public BaseMsg<BlogVo> updateBlog(
             @PathVariable("id") Integer id,
             @RequestParam(value = "title ", required = false) String title,
@@ -70,6 +72,16 @@ public class BlogController {
         } else {
             return blogService.updateBlog(blogUser.getData().getId(), id, title, content, description, atIndex);
         }
-
     }
+    @DeleteMapping("/blog/{id}")
+    public BaseMsg<BlogVo> deleteBlog(
+            @PathVariable("id") Integer id) {
+        LoginMsg<BlogUser> blogUser = authController.getBlogUser();
+        if (!blogUser.getLogin()) {
+            return BaseMsg.failure("登录后才能操作");
+        } else {
+            return blogService.deleteBlog(blogUser.getData().getId(), id);
+        }
+    }
+
 }
