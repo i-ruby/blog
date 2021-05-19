@@ -27,7 +27,6 @@ import work.iruby.blog.service.BlogUserServiceImpl;
 public class AuthTest {
     private MockMvc mvc;
 
-
     @Mock
     private BlogUserServiceImpl mockBlogUserService;
     @Mock

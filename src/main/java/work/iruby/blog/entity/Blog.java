@@ -20,6 +20,6 @@ public class Blog {
     private Boolean atIndex;
     private String description;
     private String content;
-    private Instant updatedAt;
     private Instant createdAt;
+    private Instant updatedAt;
 }

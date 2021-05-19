@@ -14,8 +14,20 @@ public class BlogUser {
     @JsonIgnore
     private String password;
     private String avatar;
-    private Instant updatedAt;
     private Instant createdAt;
+    private Instant updatedAt;
+
+    public BlogUser() {
+    }
+
+    public BlogUser(Integer id, String username, String password, String avatar, Instant createdAt, Instant updatedAt) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.avatar = avatar;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     public Integer getId() {
         return id;
@@ -49,14 +61,6 @@ public class BlogUser {
         this.avatar = avatar;
     }
 
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public Instant getCreatedAt() {
         return createdAt;
     }
@@ -65,28 +69,11 @@ public class BlogUser {
         this.createdAt = createdAt;
     }
 
-    public BlogUser() {
+    public Instant getUpdatedAt() {
+        return updatedAt;
     }
 
-    public BlogUser(Integer id, String username, String password, String avatar, Instant updatedAt, Instant createdAt) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.avatar = avatar;
+    public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuffer sb = new StringBuffer("BlogUser{");
-        sb.append("id=").append(id);
-        sb.append(", username='").append(username).append('\'');
-        sb.append(", password='").append(password).append('\'');
-        sb.append(", avatar='").append(avatar).append('\'');
-        sb.append(", updatedAt=").append(updatedAt);
-        sb.append(", createdAt=").append(createdAt);
-        sb.append('}');
-        return sb.toString();
     }
 }
